@@ -1,66 +1,137 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Backend API pour Gestion de Finances Personnelles
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Introduction
 
-## About Laravel
+Ce projet est le backend d'une application de gestion de finances personnelles développée avec Laravel. Il gère l'authentification des utilisateurs et les transactions financières (ajout, affichage, modification, suppression). L'API est documentée avec Swagger pour faciliter l'intégration avec le front-end et tester les endpoints de l'API.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Prérequis
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Avant de commencer, assurez-vous d'avoir les éléments suivants installés sur votre machine :
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **PHP** >= 8.0
+- **Composer** pour la gestion des dépendances PHP
+- **Laravel** >= 9.x
+- **MySQL** ou autre base de données compatible
+- **Swagger** pour la documentation et les tests de l'API
 
-## Learning Laravel
+## Installation
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Cloner le dépôt
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+Clonez le dépôt GitHub avec la commande suivante :
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+```bash
+git clone https://github.com/your-repository-url.git
+cd your-repository-folder
+```
 
-## Laravel Sponsors
+### Installer les dépendances
+Installez les dépendances PHP avec Composer :
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```bash
+composer install
+```
 
-### Premium Partners
+### Configurer l'environnement
+Renommez le fichier ```.env.example``` en ```.env``` et mettez à jour les variables d'environnement avec vos informations de base de données et autres configurations :
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+```bash
+cp .env.example .env
+```
 
-## Contributing
+Éditez le fichier .env pour inclure les informations suivantes :
+```
+# Configuration de la base de données
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=your_database_name
+DB_USERNAME=your_database_user
+DB_PASSWORD=your_database_password
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+# Configuration de Sanctum
+SANCTUM_STATEFUL_DOMAINS=localhost
+```
+### Générer la clé de l'application
+Générez la clé de l'application Laravel avec :
 
-## Code of Conduct
+```bash
+php artisan key:generate
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Migrer la base de données
+Appliquez les migrations pour créer les tables nécessaires dans la base de données :
 
-## Security Vulnerabilities
+```bash
+php artisan migrate
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Configuration de Swagger
+Swagger est utilisé pour documenter et tester l'API. Voici comment configurer et utiliser Swagger avec Laravel.
 
-## License
+### Installer Swagger
+Nous utilisons le package darkaonline/l5-swagger pour intégrer Swagger à Laravel. Installez-le via Composer :
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+composer require darkaonline/l5-swagger
+```
+
+### Publier les configurations
+Publiez les fichiers de configuration Swagger avec la commande suivante :
+
+```bash
+php artisan vendor:publish --provider "L5Swagger\L5SwaggerServiceProvider"
+```
+
+### Configurer Swagger
+Modifiez le fichier de configuration config/l5-swagger.php pour ajuster les paramètres selon vos besoins. Assurez-vous que les chemins d'accès et les options de sécurité sont correctement configurés.
+
+### Générer la documentation Swagger
+Générez la documentation Swagger en exécutant la commande suivante :
+
+```bash
+php artisan l5-swagger:generate
+```
+
+La documentation sera disponible à l'URL suivante : [your-app-url/api/](http://your-app-url/api/)documentation.
+
+## Authentification via Swagger
+Pour tester les endpoints protégés par authentification dans Swagger, suivez ces étapes :
+
+### Obtenez un token JWT
+1. Allez à l'endpoint /api/v1/login dans Swagger.
+2. Fournissez les informations de connexion (email et mot de passe).
+3. Exécutez la requête pour obtenir un token JWT.
+
+### Utilisez le token pour l'authentification
+1. Une fois que vous avez le token, cliquez sur le bouton "Authorize" dans l'interface Swagger.
+2. Entrez le token JWT dans le champ approprié (préfixé par Bearer).
+3. Cliquez sur "Authorize" pour appliquer le token à toutes les requêtes suivantes.
+
+## Endpoints API
+Voici une liste des endpoints disponibles dans l'API :
+
+### Authentication
+- ```POST /api/v1/login``` - Connexion de d'un utilisateur et récupération du token
+
+### Utilisateurs
+- ```GET /api/v1/users``` - Liste des utilisateurs
+- ```POST /api/v1/users``` - Créer un nouvel utilisateur
+- ```GET /api/v1/users/{id}``` - Détails d'un utilisateur
+- ```PUT /api/v1/users/{id}``` - Mettre à jour un utilisateur
+- ```DELETE /api/v1/users/{id}``` - Supprimer un utilisateur
+
+### Transactions
+- ```POST /api/v1/transactions``` - Ajouter une transaction
+- ```GET /api/v1/transactions``` - Lister les transactions de l'utilisateur authentifié
+- ```PUT /api/v1/transactions/{id}``` - Mettre à jour une transaction
+- ```DELETE /api/v1/transactions/{id}``` - Supprimer une transaction
+
+## Contribuer
+Pour contribuer à ce projet :
+1. Forkez le dépôt.
+2. Créez une branche pour votre fonctionnalité ou correctif.
+3. Soumettez une Pull Request (PR) avec une description détaillée des modifications.
+
+## Support
+Pour toute question ou problème, veuillez ouvrir une issue sur [GitHub Issues](https://github.com/features/issues).
