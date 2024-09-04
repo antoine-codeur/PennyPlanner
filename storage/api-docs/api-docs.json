@@ -6,16 +6,79 @@
         "version": "1.0.0"
     },
     "paths": {
+        "/api/v1/login": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Login user and get token",
+                "operationId": "bae68d1c55329ecb6e41f48285840c8f",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email": {
+                                        "description": "User email",
+                                        "type": "string",
+                                        "example": "user@example.com"
+                                    },
+                                    "password": {
+                                        "description": "User password",
+                                        "type": "string",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful login",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "token": {
+                                            "description": "JWT Token",
+                                            "type": "string",
+                                            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjE3MjM2MzAwLCJleHBpIjoxNjE3MjM5OTAwfQ.S6oJl6pXGQ_NJ6s3YkR9n4pD55xXf5vcPpWkjKPt8p0"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "The provided credentials are incorrect."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/users": {
             "get": {
-                "tags": [
-                    "User"
-                ],
-                "summary": "Get all users",
+                "summary": "Get a list of users",
                 "operationId": "12e989554c281d650dff75443acabf54",
                 "responses": {
                     "200": {
-                        "description": "List of users",
+                        "description": "A list of users",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -27,7 +90,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ]
             },
             "post": {
                 "tags": [
@@ -272,9 +340,21 @@
                 },
                 "type": "object"
             }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "description": "Enter 'Bearer' [space] and then your token in the text input below.",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
         }
     },
     "tags": [
+        {
+            "name": "Authentication",
+            "description": "Authentication related operations"
+        },
         {
             "name": "User",
             "description": "User"

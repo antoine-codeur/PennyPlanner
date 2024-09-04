@@ -5,26 +5,25 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use OpenApi\Annotations as OA;
 
 /**
- * @OA\Info(
- *     title="User API",
- *     version="1.0.0",
- *     description="API for managing users"
+ * @OA\Tag(
+ *     name="Authentication",
+ *     description="Authentication related operations"
  * )
  */
-
 class UserController extends Controller
 {
     /**
      * @OA\Get(
      *     path="/api/v1/users",
-     *     tags={"User"},
-     *     summary="Get all users",
+     *     summary="Get a list of users",
+     *     security={{"bearer": {}}},
      *     @OA\Response(
      *         response=200,
-     *         description="List of users",
+     *         description="A list of users",
      *         @OA\JsonContent(
      *             type="array",
      *             @OA\Items(ref="#/components/schemas/User")
@@ -85,8 +84,23 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $user = User::create($request->all());
-        return response()->json($user, 201);
+        try {
+            $validatedData = $request->validate([
+                'name' => ['required', 'string', 'max:255'],
+                'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+                'password' => ['required', 'string', 'min:8'],
+            ]);
+
+            $validatedData['password'] = Hash::make($validatedData['password']);
+
+            $user = User::create($validatedData);
+
+            return response()->json($user, 201);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['error' => $e->errors()], 422);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
     }
 
     /**
@@ -160,10 +174,27 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $user = User::findOrFail($id);
-        $user->update($request->all());
-        return response()->json($user);
+        try {
+            $user = User::findOrFail($id);
+            $validatedData = $request->validate([
+                'name' => ['sometimes', 'string', 'max:255'],
+                'email' => ['sometimes', 'string', 'email', 'max:255', 'unique:users,email,' . $id],
+                'password' => ['sometimes', 'string', 'min:8'],
+            ]);
+
+            if (isset($validatedData['password'])) {
+                $validatedData['password'] = Hash::make($validatedData['password']);
+            }
+
+            $user->update($validatedData);
+            return response()->json($user);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['error' => $e->errors()], 422);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
     }
+
 
     /**
      * @OA\Delete(
