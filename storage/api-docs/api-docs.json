@@ -72,6 +72,238 @@
                 }
             }
         },
+        "/api/v1/transactions": {
+            "get": {
+                "tags": [
+                    "Transaction"
+                ],
+                "summary": "Get all transactions for the authenticated user",
+                "operationId": "a564276e1c71aa28ff7e531d3d30d256",
+                "responses": {
+                    "200": {
+                        "description": "List of transactions",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Transaction"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Transaction"
+                ],
+                "summary": "Add a new transaction",
+                "operationId": "b0ee1d82e907b370897f7c2adde8a664",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "type": {
+                                        "description": "Type of the transaction",
+                                        "type": "string",
+                                        "example": "income"
+                                    },
+                                    "amount": {
+                                        "description": "Amount of the transaction",
+                                        "type": "number",
+                                        "example": 100.5
+                                    },
+                                    "description": {
+                                        "description": "Description of the transaction",
+                                        "type": "string",
+                                        "example": "Salary payment"
+                                    },
+                                    "date": {
+                                        "description": "Date of the transaction",
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-09-04"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Transaction created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Transaction"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Invalid data provided"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/transactions/{id}": {
+            "put": {
+                "tags": [
+                    "Transaction"
+                ],
+                "summary": "Update a transaction",
+                "operationId": "7be6f226f094053033fa504c693d257c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the transaction",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "type": {
+                                        "description": "Type of the transaction",
+                                        "type": "string",
+                                        "example": "income"
+                                    },
+                                    "amount": {
+                                        "description": "Amount of the transaction",
+                                        "type": "number",
+                                        "example": 100.5
+                                    },
+                                    "description": {
+                                        "description": "Description of the transaction",
+                                        "type": "string",
+                                        "example": "Salary payment"
+                                    },
+                                    "date": {
+                                        "description": "Date of the transaction",
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-09-04"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Transaction updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Transaction"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Transaction not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Transaction not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Transaction"
+                ],
+                "summary": "Delete a transaction",
+                "operationId": "db289b0d1fea21825cc577ddeb7f2157",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the transaction",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Transaction deleted"
+                    },
+                    "404": {
+                        "description": "Transaction not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Transaction not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/v1/users": {
             "get": {
                 "summary": "Get a list of users",
@@ -306,6 +538,51 @@
     },
     "components": {
         "schemas": {
+            "Transaction": {
+                "required": [
+                    "user_id",
+                    "type",
+                    "amount",
+                    "date"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "user_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "income"
+                    },
+                    "amount": {
+                        "type": "number",
+                        "format": "decimal",
+                        "example": 100.5
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Salary"
+                    },
+                    "date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2024-09-01"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
             "User": {
                 "required": [
                     "name",
@@ -351,6 +628,10 @@
         }
     },
     "tags": [
+        {
+            "name": "Transaction",
+            "description": "Transaction related operations"
+        },
         {
             "name": "Authentication",
             "description": "Authentication related operations"
