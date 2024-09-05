@@ -19,7 +19,10 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => [env('FRONTEND_URL', 'http://localhost:3000')],
+    'allowed_origins' => [
+        env('FRONTEND_URL', 'http://localhost:3000'), // Assuming this is in production or another environment
+        'http://localhost:5173' // Add this for your current development environment
+    ],
 
     'allowed_origins_patterns' => [],
 
