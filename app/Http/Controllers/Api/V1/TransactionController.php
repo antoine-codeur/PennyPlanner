@@ -84,7 +84,7 @@ class TransactionController extends Controller
      */
     public function store(Request $request)
     {
-        $user = $request->user(); // Assuming user is authenticated
+        $user = $request->user();
 
         if (!$user) {
             return response()->json(['error' => 'Unauthenticated.'], 401);
@@ -97,11 +97,14 @@ class TransactionController extends Controller
             'amount' => 'required|numeric',
             'description' => 'nullable|string',
             'date' => 'required|date',
-            'category_id' => 'nullable|exists:categories,id', // Validate category_id
+            'category_id' => 'nullable|exists:categories,id',
         ]);
 
         $transaction = new Transaction($request->all());
         $transaction->save();
+
+        // Charger la relation category
+        $transaction->load('category');
 
         return response()->json(new TransactionResource($transaction), 201);
     }
@@ -188,6 +191,9 @@ class TransactionController extends Controller
 
         $transaction->update($request->only(['type', 'amount', 'description', 'date', 'category_id']));
 
+        // Charger la relation category
+        $transaction->load('category');
+
         return new TransactionResource($transaction);
     }
 
@@ -249,7 +255,7 @@ class TransactionController extends Controller
      */
     public function index()
     {
-        $transactions = Transaction::where('user_id', Auth::id())->get();
+        $transactions = Transaction::where('user_id', Auth::id())->with('category')->get();
         return TransactionResource::collection($transactions);
     }
 }

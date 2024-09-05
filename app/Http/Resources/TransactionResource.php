@@ -15,7 +15,8 @@ class TransactionResource extends JsonResource
             'type' => $this->type,
             'amount' => $this->amount,
             'description' => $this->description,
-            'date' => $this->date->toDateString(), // Formatting date
+            'date' => $this->date->toDateString(),
+            'category' => new CategoryResource($this->whenLoaded('category')),
             'created_at' => $this->created_at->toDateTimeString(),
             'updated_at' => $this->updated_at->toDateTimeString(),
         ];
