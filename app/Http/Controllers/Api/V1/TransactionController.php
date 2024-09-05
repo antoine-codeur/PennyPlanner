@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\TransactionResource;
 use App\Models\Transaction;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
@@ -54,6 +55,12 @@ class TransactionController extends Controller
      *                 format="date",
      *                 description="Date of the transaction",
      *                 example="2024-09-04"
+     *             ),
+     *             @OA\Property(
+     *                 property="category_id",
+     *                 type="integer",
+     *                 description="ID of the category",
+     *                 example=1
      *             )
      *         )
      *     ),
@@ -90,12 +97,13 @@ class TransactionController extends Controller
             'amount' => 'required|numeric',
             'description' => 'nullable|string',
             'date' => 'required|date',
+            'category_id' => 'nullable|exists:categories,id', // Validate category_id
         ]);
 
         $transaction = new Transaction($request->all());
         $transaction->save();
 
-        return response()->json($transaction, 201);
+        return response()->json(new TransactionResource($transaction), 201);
     }
 
     /**
@@ -138,6 +146,12 @@ class TransactionController extends Controller
      *                 format="date",
      *                 description="Date of the transaction",
      *                 example="2024-09-04"
+     *             ),
+     *             @OA\Property(
+     *                 property="category_id",
+     *                 type="integer",
+     *                 description="ID of the category",
+     *                 example=1
      *             )
      *         )
      *     ),
@@ -161,7 +175,7 @@ class TransactionController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $transaction = Transaction::findOrFail($id);
+        $transaction = Transaction::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
         $this->authorize('update', $transaction);
 
         $request->validate([
@@ -169,9 +183,10 @@ class TransactionController extends Controller
             'amount' => 'nullable|numeric',
             'description' => 'nullable|string',
             'date' => 'nullable|date',
+            'category_id' => 'nullable|exists:categories,id',
         ]);
 
-        $transaction->update($request->only(['type', 'amount', 'description', 'date']));
+        $transaction->update($request->only(['type', 'amount', 'description', 'date', 'category_id']));
 
         return new TransactionResource($transaction);
     }
@@ -208,7 +223,7 @@ class TransactionController extends Controller
      */
     public function destroy($id)
     {
-        $transaction = Transaction::findOrFail($id);
+        $transaction = Transaction::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
         $this->authorize('delete', $transaction);
 
         $transaction->delete();
@@ -232,7 +247,7 @@ class TransactionController extends Controller
      *     )
      * )
      */
-    public function show()
+    public function index()
     {
         $transactions = Transaction::where('user_id', Auth::id())->get();
         return TransactionResource::collection($transactions);

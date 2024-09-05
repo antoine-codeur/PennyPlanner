@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,6 +17,7 @@ use OpenApi\Annotations as OA;
  *     @OA\Property(property="amount", type="number", format="decimal", example=100.50),
  *     @OA\Property(property="description", type="string", example="Salary"),
  *     @OA\Property(property="date", type="string", format="date", example="2024-09-01"),
+ *     @OA\Property(property="category_id", type="integer", example=1),
  *     @OA\Property(property="created_at", type="string", format="date-time"),
  *     @OA\Property(property="updated_at", type="string", format="date-time")
  * )
@@ -30,6 +32,7 @@ class Transaction extends Model
         'amount',
         'description',
         'date',
+        'category_id',
     ];
 
     protected $casts = [
@@ -40,5 +43,10 @@ class Transaction extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
@@ -91,8 +92,7 @@ class AuthController extends Controller
         $token = $user->createToken('Personal Access Token')->plainTextToken;
 
         return response()->json(['token' => $token]);
-    }
-    /**
+    }/**
      * @OA\Post(
      *     path="/api/v1/register",
      *     summary="Register a new user",
@@ -161,6 +161,22 @@ class AuthController extends Controller
         $validatedData['role_id'] = $validatedData['role_id'] ?? 1; // Default to role_id 1 if not provided
 
         $user = User::create($validatedData);
+
+        // Liste prédéfinie de catégories
+        $defaultCategories = [
+            'Groceries',
+            'Utilities',
+            'Entertainment',
+            'Healthcare',
+            'Transportation'
+        ];
+
+        foreach ($defaultCategories as $categoryName) {
+            Category::create([
+                'name' => $categoryName,
+                'user_id' => $user->id,
+            ]);
+        }
 
         $token = $user->createToken('Personal Access Token')->plainTextToken;
 
