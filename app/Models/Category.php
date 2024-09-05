@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
  *     @OA\Property(property="id", type="integer", example=1),
  *     @OA\Property(property="name", type="string", example="Groceries"),
  *     @OA\Property(property="user_id", type="integer", example=1),
+ *     @OA\Property(property="icon", type="string", example="FontAwesome icon class for the category"),
  *     @OA\Property(property="created_at", type="string", format="date-time"),
  *     @OA\Property(property="updated_at", type="string", format="date-time")
  * )
@@ -21,7 +22,7 @@ class Category extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'name'];
+    protected $fillable = ['name', 'user_id', 'icon'];
 
     public function user()
     {

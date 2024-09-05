@@ -164,16 +164,17 @@ class AuthController extends Controller
 
         // Liste prédéfinie de catégories
         $defaultCategories = [
-            'Groceries',
-            'Utilities',
-            'Entertainment',
-            'Healthcare',
-            'Transportation'
+            ['name' => 'Groceries', 'icon' => 'fa-shopping-cart'],
+            ['name' => 'Utilities', 'icon' => 'fa-bolt'],
+            ['name' => 'Entertainment', 'icon' => 'fa-film'],
+            ['name' => 'Healthcare', 'icon' => 'fa-heartbeat'],
+            ['name' => 'Transportation', 'icon' => 'fa-bus']
         ];
 
-        foreach ($defaultCategories as $categoryName) {
+        foreach ($defaultCategories as $category) {
             Category::create([
-                'name' => $categoryName,
+                'name' => $category['name'],
+                'icon' => $category['icon'], // Ajout de l'icône
                 'user_id' => $user->id,
             ]);
         }

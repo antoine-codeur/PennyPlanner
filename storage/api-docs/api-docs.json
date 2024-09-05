@@ -1001,6 +1001,10 @@
                         "type": "integer",
                         "example": 1
                     },
+                    "icon": {
+                        "type": "string",
+                        "example": "FontAwesome icon class for the category"
+                    },
                     "created_at": {
                         "type": "string",
                         "format": "date-time"
