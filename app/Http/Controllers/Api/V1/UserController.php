@@ -10,37 +10,18 @@ use OpenApi\Annotations as OA;
 
 /**
  * @OA\Tag(
- *     name="Authentication",
- *     description="Authentication related operations"
+ *     name="User",
+ *     description="User related operations"
  * )
  */
 class UserController extends Controller
 {
     /**
-     * @OA\Get(
-     *     path="/api/v1/users",
-     *     summary="Get a list of users",
-     *     security={{"bearer": {}}},
-     *     @OA\Response(
-     *         response=200,
-     *         description="A list of users",
-     *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(ref="#/components/schemas/User")
-     *         )
-     *     )
-     * )
-     */
-    public function index()
-    {
-        return User::all();
-    }
-
-    /**
-     * @OA\Post(
-     *     path="/api/v1/users",
+     * @OA\Put(
+     *     path="/api/v1/users/profile",
      *     tags={"User"},
-     *     summary="Create a new user",
+     *     summary="Update the authenticated user's profile",
+     *     security={{"bearerAuth": {}}},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
@@ -60,13 +41,13 @@ class UserController extends Controller
      *                 property="password",
      *                 type="string",
      *                 description="Password of the user",
-     *                 example="hashed_password"
+     *                 example="new_password123"
      *             )
      *         )
      *     ),
      *     @OA\Response(
-     *         response=201,
-     *         description="User created",
+     *         response=200,
+     *         description="Profile updated",
      *         @OA\JsonContent(ref="#/components/schemas/User")
      *     ),
      *     @OA\Response(
@@ -82,103 +63,14 @@ class UserController extends Controller
      *     )
      * )
      */
-    public function store(Request $request)
+    public function updateProfile(Request $request)
     {
+        $user = $request->user();
+
         try {
-            $validatedData = $request->validate([
-                'name' => ['required', 'string', 'max:255'],
-                'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
-                'password' => ['required', 'string', 'min:8'],
-            ]);
-
-            $validatedData['password'] = Hash::make($validatedData['password']);
-
-            $user = User::create($validatedData);
-
-            return response()->json($user, 201);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json(['error' => $e->errors()], 422);
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 400);
-        }
-    }
-
-    /**
-     * @OA\Get(
-     *     path="/api/v1/users/{id}",
-     *     tags={"User"},
-     *     summary="Get a specific user",
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID of the user",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="User details",
-     *         @OA\JsonContent(ref="#/components/schemas/User")
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="User not found",
-     *         @OA\JsonContent(
-     *             @OA\Property(
-     *                 property="error",
-     *                 type="string",
-     *                 example="User not found"
-     *             )
-     *         )
-     *     )
-     * )
-     */
-    public function show($id)
-    {
-        return User::findOrFail($id);
-    }
-
-    /**
-     * @OA\Put(
-     *     path="/api/v1/users/{id}",
-     *     tags={"User"},
-     *     summary="Update a user",
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID of the user",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/User")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="User updated",
-     *         @OA\JsonContent(ref="#/components/schemas/User")
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="User not found",
-     *         @OA\JsonContent(
-     *             @OA\Property(
-     *                 property="error",
-     *                 type="string",
-     *                 example="User not found"
-     *             )
-     *         )
-     *     )
-     * )
-     */
-    public function update(Request $request, $id)
-    {
-        try {
-            $user = User::findOrFail($id);
             $validatedData = $request->validate([
                 'name' => ['sometimes', 'string', 'max:255'],
-                'email' => ['sometimes', 'string', 'email', 'max:255', 'unique:users,email,' . $id],
+                'email' => ['sometimes', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
                 'password' => ['sometimes', 'string', 'min:8'],
             ]);
 
@@ -193,41 +85,5 @@ class UserController extends Controller
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
         }
-    }
-
-
-    /**
-     * @OA\Delete(
-     *     path="/api/v1/users/{id}",
-     *     tags={"User"},
-     *     summary="Delete a user",
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID of the user",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=204,
-     *         description="User deleted"
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="User not found",
-     *         @OA\JsonContent(
-     *             @OA\Property(
-     *                 property="error",
-     *                 type="string",
-     *                 example="User not found"
-     *             )
-     *         )
-     *     )
-     * )
-     */
-    public function destroy($id)
-    {
-        User::findOrFail($id)->delete();
-        return response()->json(null, 204);
     }
 }

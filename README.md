@@ -63,7 +63,7 @@ php artisan key:generate
 Appliquez les migrations pour créer les tables nécessaires dans la base de données :
 
 ```bash
-php artisan migrate
+php artisan migrate:fresh --seed
 ```
 
 ## Configuration de Swagger
