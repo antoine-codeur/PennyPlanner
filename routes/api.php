@@ -19,6 +19,7 @@ Route::prefix('/v1')->group(function () {
         // Routes for public users
         Route::get('/users/profile', [UserController::class, 'profile']);
         Route::put('/users/profile', [UserController::class, 'updateProfile']);
+        Route::delete('/users/profile', [UserController::class, 'deleteProfile']);
     
         // Routes for transactions
         Route::post('/transactions', [TransactionController::class, 'store']);

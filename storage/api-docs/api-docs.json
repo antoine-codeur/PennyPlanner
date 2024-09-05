@@ -566,6 +566,46 @@
             }
         },
         "/api/v1/users/profile": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get the authenticated user's profile",
+                "operationId": "ff3612f9aedcefed24330811759fff3b",
+                "responses": {
+                    "200": {
+                        "description": "User profile retrieved",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
             "put": {
                 "tags": [
                     "User"
@@ -619,6 +659,52 @@
                                         "error": {
                                             "type": "string",
                                             "example": "Invalid data provided"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Delete the authenticated user's profile",
+                "operationId": "ee1061a29c4624494de3140ed48055e0",
+                "responses": {
+                    "200": {
+                        "description": "Profile deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User profile deleted successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error in deleting the profile",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Unable to delete user profile."
                                         }
                                     },
                                     "type": "object"

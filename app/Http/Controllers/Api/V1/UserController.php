@@ -17,6 +17,35 @@ use OpenApi\Annotations as OA;
 class UserController extends Controller
 {
     /**
+     * @OA\Get(
+     *     path="/api/v1/users/profile",
+     *     tags={"User"},
+     *     summary="Get the authenticated user's profile",
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="User profile retrieved",
+     *         @OA\JsonContent(ref="#/components/schemas/User")
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="error",
+     *                 type="string",
+     *                 example="Unauthenticated."
+     *             )
+     *         )
+     *     )
+     * )
+     */
+    public function profile(Request $request)
+    {
+        return response()->json($request->user());
+    }
+
+    /**
      * @OA\Put(
      *     path="/api/v1/users/profile",
      *     tags={"User"},
@@ -84,6 +113,49 @@ class UserController extends Controller
             return response()->json(['error' => $e->errors()], 422);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
+    /**
+     * @OA\Delete(
+     *     path="/api/v1/users/profile",
+     *     tags={"User"},
+     *     summary="Delete the authenticated user's profile",
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Profile deleted successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="User profile deleted successfully."
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Error in deleting the profile",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="error",
+     *                 type="string",
+     *                 example="Unable to delete user profile."
+     *             )
+     *         )
+     *     )
+     * )
+     */
+    public function deleteProfile(Request $request)
+    {
+        $user = $request->user();
+
+        try {
+            // Detach any related data or perform any necessary cleanup here
+            $user->delete();
+
+            return response()->json(['message' => 'User profile deleted successfully.']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Unable to delete user profile.'], 400);
         }
     }
 }
