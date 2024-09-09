@@ -189,7 +189,7 @@ class CategoryController extends Controller
             'name' => 'required|string|unique:categories,name,' . $id . ',id,user_id,' . Auth::id(),
         ]);
 
-        $category->update($request->only('name'));
+        $category->update($request->only('name', 'icon'));
 
         return new CategoryResource($category);
     }
