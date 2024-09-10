@@ -31,51 +31,45 @@ class CategoryController extends Controller
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             @OA\Property(
-     *                 property="name",
-     *                 type="string",
-     *                 description="Name of the category",
-     *                 example="Groceries"
-     *             )
+     *             required={"name"},
+     *             @OA\Property(property="name", type="string", example="car"),
+     *             @OA\Property(property="icon", type="string", example="fa-car")
      *         )
      *     ),
      *     @OA\Response(
      *         response=201,
-     *         description="Category created",
-     *         @OA\JsonContent(ref="#/components/schemas/Category")
+     *         description="Category created successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="id", type="integer", example=1),
+     *             @OA\Property(property="name", type="string", example="car"),
+     *             @OA\Property(property="icon", type="string", example="fa-car"),
+     *             @OA\Property(property="created_at", type="string", format="date-time", example="2024-09-10 07:52:46"),
+     *             @OA\Property(property="updated_at", type="string", format="date-time", example="2024-09-10 07:52:46")
+     *         )
      *     ),
      *     @OA\Response(
-     *         response=400,
-     *         description="Invalid input",
+     *         response=422,
+     *         description="Validation error",
      *         @OA\JsonContent(
-     *             @OA\Property(
-     *                 property="error",
-     *                 type="string",
-     *                 example="Invalid data provided"
-     *             )
+     *             @OA\Property(property="error", type="string", example="The given data was invalid.")
      *         )
      *     )
      * )
      */
     public function store(Request $request)
     {
-        $user = $request->user(); // Assuming user is authenticated
-
-        if (!$user) {
-            return response()->json(['error' => 'Unauthenticated.'], 401);
-        }
-
         $request->validate([
-            'name' => 'required|string|unique:categories,name,NULL,id,user_id,' . $user->id,
+            'name' => 'required|string|unique:categories,name,NULL,id,user_id,' . Auth::id(),
+            'icon' => 'nullable|string', // Added validation for 'icon'
         ]);
 
-        $category = new Category([
+        $category = Category::create([
             'name' => $request->name,
-            'user_id' => $user->id
+            'icon' => $request->icon, // Ensure 'icon' is included in the creation process
+            'user_id' => Auth::id(),
         ]);
-        $category->save();
 
-        return response()->json(new CategoryResource($category), 201);
+        return new CategoryResource($category);
     }
 
     /**
@@ -187,6 +181,7 @@ class CategoryController extends Controller
 
         $request->validate([
             'name' => 'required|string|unique:categories,name,' . $id . ',id,user_id,' . Auth::id(),
+            'icon' => 'nullable|string', // Added validation for 'icon'
         ]);
 
         $category->update($request->only('name', 'icon'));

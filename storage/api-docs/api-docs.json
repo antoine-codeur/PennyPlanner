@@ -372,11 +372,17 @@
                     "content": {
                         "application/json": {
                             "schema": {
+                                "required": [
+                                    "name"
+                                ],
                                 "properties": {
                                     "name": {
-                                        "description": "Name of the category",
                                         "type": "string",
-                                        "example": "Groceries"
+                                        "example": "car"
+                                    },
+                                    "icon": {
+                                        "type": "string",
+                                        "example": "fa-car"
                                     }
                                 },
                                 "type": "object"
@@ -386,24 +392,48 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "Category created",
+                        "description": "Category created successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Category"
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "name": {
+                                            "type": "string",
+                                            "example": "car"
+                                        },
+                                        "icon": {
+                                            "type": "string",
+                                            "example": "fa-car"
+                                        },
+                                        "created_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2024-09-10 07:52:46"
+                                        },
+                                        "updated_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2024-09-10 07:52:46"
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid input",
+                    "422": {
+                        "description": "Validation error",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "error": {
                                             "type": "string",
-                                            "example": "Invalid data provided"
+                                            "example": "The given data was invalid."
                                         }
                                     },
                                     "type": "object"
