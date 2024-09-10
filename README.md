@@ -122,10 +122,18 @@ Voici une liste des endpoints disponibles dans l'API :
 - ```DELETE /api/v1/users/{id}``` - Supprimer un utilisateur
 
 ### Transactions
-- ```POST /api/v1/transactions``` - Ajouter une transaction
 - ```GET /api/v1/transactions``` - Lister les transactions de l'utilisateur authentifié
+- ```POST /api/v1/transactions``` - Ajouter une transaction
+- ```GET /api/v1/transactions/{id}``` - Détails d'une transaction
 - ```PUT /api/v1/transactions/{id}``` - Mettre à jour une transaction
 - ```DELETE /api/v1/transactions/{id}``` - Supprimer une transaction
+
+### Catégories
+- ```GET /api/v1/categories``` - Lister les categories de l'utilisateur authentifié
+- ```POST /api/v1/categories``` - Ajouter une categorie
+- ```GET /api/v1/categories/{id}``` - Détails d'une categorie
+- ```PUT /api/v1/categories/{id}``` - Mettre à jour une categorie
+- ```DELETE /api/v1/categories/{id}``` - Supprimer une categorie
 
 ## Contribuer
 Pour contribuer à ce projet :
